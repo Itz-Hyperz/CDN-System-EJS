@@ -1,0 +1,38 @@
+{
+
+    "domain": "http://localhost:3000",
+    "port": 3000,
+    "licenseKey": "YOUR_LICENSE_KEY",
+    "debugMode": true,
+    "ownerIds": ["704094587836301392", "YOUR_ACCOUNT_ID"],
+    
+    "fileNameLength": 7,
+    "defaultMaxSpace": 5000,
+
+    "sql": {
+        "host": "localhost",
+        "user": "root",
+        "password": "",
+        "database": "bosscdn"
+    },
+
+    "loginMethods": {
+        "usePassport": true,
+        "useDiscord": false,
+        "discordOAuthId": "YOUR_CLIENT_ID",
+        "discordOAuthSecret": "YOUR_CLIENT_SECRET"
+    },
+
+    "timeZone": {
+        "tz": "EST",
+        "format": "MM-DD-YYYY hh:mm A"
+    },
+
+    "redirects": [
+        {
+            "name": "discord",
+            "link": "https://discord.gg/CQT4Vh937B"
+        }
+    ]
+
+}

@@ -1,0 +1,209 @@
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Panel - <%= sitesettings.sitename %></title>
+        <meta property="og:title" content="Panel - <%= sitesettings.sitename %>" />
+        <link rel="icon" href="/assets/logo.png">
+        <meta property="og:image" content="/assets/logo.png">
+        <meta name="theme-color" content="<%= sitesettings.sitecolor %>">
+        <meta name="description" content="<%= sitesettings.sitedesc %>" />
+        <meta property="og:type" content="website" />
+        <meta property="og:description" content="<%= sitesettings.sitedesc %>" />
+    </head>
+    <body>
+        <%- include('_header') %>
+        <div class="row p-5">
+            <div class="col-lg-4 mb-3">
+                <div class="container panelcolumnheight bg-dark p-3" style="border-radius: 0.4em;">
+                    <h1 class="bigfont">👋 Hello there!</h1>
+                    <hr>
+                    <button type="button" class="btn btn-theme2 w-100 mb-2" data-bs-toggle="modal" data-bs-target="#viewStorage"><i class="fa-solid fa-server"></i> View Storage</button>
+                    <button type="button" class="btn btn-theme2 w-100 mb-2" data-bs-toggle="modal" data-bs-target="#apiSecret"><i class="fa-solid fa-key"></i> Your API Secret</button>
+                    <button type="button" class="btn btn-theme2 w-100 mb-2" data-bs-toggle="modal" data-bs-target="#accountSettings"><i class="fa-solid fa-user-gear"></i> Account Settings</button>
+                    <% if(isStaff) { %>
+                        <a href="/admin" class="btn btn-theme2 w-100 mb-2"><i class="fa-solid fa-shield-halved"></i> Admin Panel</a>
+                    <% }; %>
+                    <hr>
+                    <h4>Linked Programs</h4>
+                    <a href="https://getsharex.com/" target="_blank" class="btn btn-theme2 w-100 mb-2"><i class="fa-solid fa-download"></i> Download ShareX Program</a>
+                    <a href="/backend/getmyfile" target="_blank" class="btn btn-theme2 w-100 mb-2"><i class="fa-solid fa-download"></i> Download Settings File</a>
+                    <hr>
+                    <p class="mt-1" style="color: lightgray;">Login: <%= currenttime %></p>
+                </div>
+            </div>
+            <div class="col-lg-8 mb-3">
+                <div class="container bg-dark p-3" style="border-radius: 0.4em;">
+                    <h1 class="bigfont mb-3"><i class="fa-solid fa-cloud"></i> Uploaded Files</h1>
+                    <form action="/manualupload" method="post" enctype="multipart/form-data">
+                        <div class="row justify-content-center">
+                            <div class="col-lg-8 mb-2">
+                                <input type="file" name="foldername" value="<%= user.folder %>" placeholder="Your folder name..." required class="form-control inputstylelol bg-input-dark w-100">
+                            </div>
+                            <div class="col-lg-4 mb-2">
+                                <button type="submit" class="btn btn-theme w-100"><i class="fa-solid fa-upload"></i> Upload</button>
+                            </div>
+                        </div>
+                    </form>
+                    <hr>
+                    <div class="row justify-content-start p-2">
+                        <% uploads.reverse().forEach(function(item) { %>
+                            <div class="col-lg-3 mb-2 p-1">
+                                <div class="uploadedfile bg-body bd-theme p-2 ">
+                                    <img class="censor bd-theme" loading="lazy" src="/u/<%= user.folder %>/<%= item.filename %>">
+                                    <p class="mt-3"><code><%= item.filename %></code></p>
+                                    <p class="mb-3"><%= item.datetime %></p>
+                                    <div class="row justify-content-center">
+                                        <div class="col-4">
+                                            <a href="/backend/delete/upload/<%= item.uniqueid %>" style="font-size: 1.5em;" class="btn btn-theme w-100"><i class="fa-solid fa-trash-can"></i></a>
+                                        </div>
+                                        <div class="col-8">
+                                            <a href="/u/<%= user.folder %>/<%= item.filename %>" target="_blank" class="btn btn-theme w-100"><i class="fa-solid fa-eye"></i> View</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        <% }); %>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <%- include('_footer') %>
+        <div class="modal fade" id="viewStorage" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-xl">
+              <div class="modal-content bg-dark">
+                <div class="modal-header">
+                  <h1 class="modal-title fs-5" id="exampleModalLabel"><i class="fa-solid fa-server"></i> Storage Manager</h1>
+                  <button type="button" class="btnnostyle closebutton" data-bs-dismiss="modal" aria-label="Close">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="container">
+                        <div class="row justify-content-center">
+                            <div class="col-6 mb-2 text-start">
+                                <label>Used Storage</label>
+                                <h3><%= mbSize %> MB</h3>
+                            </div>
+                            <div class="col-6 mb-2 text-end">
+                                <label>Max Storage</label>
+                                <h3><%= user.maxspace.toFixed(2) %> MB</h3>
+                            </div>
+                        </div>
+                        <div class="progress mb-4" role="progressbar" aria-label="Example 20px high" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100" style="height: 20px">
+                            <div class="progress-bar progress-bar-striped progress-bar-animated bg-theme" style="width: <%= percentage %>%"><%= percentage %>%</div>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="container mt-4">
+                        <div class="row justify-content-center">
+                            <div class="col-6 mb-3 text-start">
+                                <label><i class="fa-solid fa-upload"></i> Uploaded Files</label>
+                                <h2><%= uploads.length.toLocaleString() %></h2>
+                            </div>
+                            <div class="col-6 mb-3 text-end">
+                                <a href="/backend/deletemyfolder" class="btn w-75 mt-1 btn-theme"><i class="fa-solid fa-circle-radiation"></i> Delete Folder</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+              </div>
+            </div>
+        </div>
+        <div class="modal fade" id="apiSecret" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-xl">
+              <div class="modal-content bg-dark">
+                <div class="modal-header">
+                  <h1 class="modal-title fs-5" id="exampleModalLabel"><i class="fa-solid fa-key"></i> API Manager</h1>
+                  <button type="button" class="btnnostyle closebutton" data-bs-dismiss="modal" aria-label="Close">&times;</button>
+                </div>
+                <div class="modal-body text-center">
+                    <h3 class="mb-3"><i class="fa-solid fa-key"></i> Your API Secret</h3>
+                    <h5 class="mb-4"><code class="censor"><%= user.secret %></code></h5>
+                    <div class="w-75 mx-auto">
+                        <div class="row justify-content-center">
+                            <div class="col-6 mb-3">
+                                <p class="btn btn-theme w-100"><i class="fa-solid fa-copy"></i> <button class="btnnostyle text-white" onclick="myFunction()" id="copyButton">Copy Secret</button></p>
+                            </div>
+                            <div class="col-6 mb-3">
+                                <a class="btn btn-theme w-100" href="/backend/regensecret"><i class="fa-solid fa-arrows-rotate"></i> Regenerate</a>
+                            </div>
+                        </div>
+                    </div>
+                    <small>Make sure to re-download your settings file after re-generating your secret.</small>
+                </div>
+              </div>
+            </div>
+        </div>
+        <div class="modal fade" id="accountSettings" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-xl">
+              <div class="modal-content bg-dark">
+                <div class="modal-header">
+                  <h1 class="modal-title fs-5" id="exampleModalLabel"><i class="fa-solid fa-user-gear"></i> Account Settings</h1>
+                  <button type="button" class="btnnostyle closebutton" data-bs-dismiss="modal" aria-label="Close">&times;</button>
+                </div>
+                <div class="modal-body text-center">
+                    <h3 class="mb-3"><i class="fa-solid fa-id-card"></i> Account ID</h3>
+                    <h5 class="mb-4"><code><%= user.id %></code></h5>
+                    <hr>
+                    <form action="/backend/update/folder" method="post">
+                        <div class="row justify-content-center">
+                            <div class="col-lg-8 mb-2 mt-2">
+                                <input type="text" name="foldername" value="<%= user.folder %>" placeholder="Your folder name..." required class="form-control inputstylelol bg-input-dark w-100">
+                            </div>
+                            <div class="col-lg-4 mb-2 mt-2">
+                                <button type="submit" class="btn btn-theme w-100"><i class="fa-solid fa-pencil"></i> Update Folder</button>
+                            </div>
+                        </div>
+                    </form>
+                    <form action="/backend/update/webhook" method="post">
+                        <div class="row justify-content-center">
+                            <div class="col-lg-8 mb-2 mt-2">
+                                <input type="text" name="webhook" value="<%= user.webhook %>" placeholder="Your webhook url..." required class="form-control inputstylelol bg-input-dark w-100">
+                            </div>
+                            <div class="col-lg-4 mb-2 mt-2">
+                                <button type="submit" class="btn btn-theme w-100"><i class="fa-solid fa-gear"></i> Update Webhook</button>
+                            </div>
+                        </div>
+                    </form>
+                    <hr>
+                    <form action="/backend/update/password" method="post">
+                        <div class="row justify-content-center">
+                            <div class="col-lg-4 mb-2 mt-2">
+                                <input type="password" name="password" placeholder="New password..." required class="form-control inputstylelol bg-input-dark w-100">
+                            </div>
+                            <div class="col-lg-4 mb-2 mt-2">
+                                <input type="password" name="confpassword" placeholder="Confirm password..." required class="form-control inputstylelol bg-input-dark w-100">
+                            </div>
+                            <div class="col-lg-4 mb-2 mt-2">
+                                <button type="submit" class="btn btn-theme w-100"><i class="fa-solid fa-floppy-disk"></i> Save Changes</button>
+                            </div>
+                        </div>
+                    </form>
+                    <small>Your Account ID does not ever change. It is unique to your account and cannot be replicated.</small>
+                </div>
+              </div>
+            </div>
+        </div>
+
+        <input type="text" id="thatlk" value="<%= user.secret %>" hidden="">
+        <script>
+            function myFunction() {
+                // Get the text field
+                var copyText = document.getElementById("thatlk");
+                var copyButton = document.getElementById("copyButton");
+                
+                // Select the text field
+                copyText.select();
+                copyText.setSelectionRange(0, 99999); // For mobile devices
+                
+                // Copy the text inside the text field
+                navigator.clipboard.writeText(copyText.value);
+                
+                // Alert the copied text
+                copyButton.textContent = "Copied!";
+                setTimeout(function() {
+                    copyButton.textContent = 'Copy Secret';
+                }, 900);
+            };
+        </script>
+    </body>
+</html>

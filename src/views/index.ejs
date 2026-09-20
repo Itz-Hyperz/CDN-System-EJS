@@ -1,0 +1,60 @@
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Home - <%= sitesettings.sitename %></title>
+        <meta property="og:title" content="Home - <%= sitesettings.sitename %>" />
+        <link rel="icon" href="/assets/logo.png">
+        <meta property="og:image" content="/assets/logo.png">
+        <meta name="theme-color" content="<%= sitesettings.sitecolor %>">
+        <meta name="description" content="<%= sitesettings.sitedesc %>" />
+        <meta property="og:type" content="website" />
+        <meta property="og:description" content="<%= sitesettings.sitedesc %>" />
+    </head>
+    <body>
+        <%- include('_header') %>
+        <div class="container bg-dark p-3 homepageattention" style="border-radius: 0.4em;">
+            <div class="row justify-content-center">
+                <div class="col-lg-4 text-center">
+                    <img src="/assets/logo.png" class="homepagelogo" alt="website logo">
+                </div>
+                <div class="col-lg-8 text-start aligncentermobile">
+                    <div class="desktop">
+                        <br>
+                    </div>
+                    <h1 class="bigfont homepageheadermain"><i class="fa-solid fa-cloud"></i> <%= sitesettings.sitename %></h1>
+                    <p class="mb-3"><%= sitesettings.sitedesc %></p>
+                    <hr>
+                    <a href="https://boss.software" class="btn btn-theme mb-2" target="_blank"><i class="fa-solid fa-code"></i> Boss Software Systems</a>
+                    <a href="/panel" class="btn btn-theme mb-2"><i class="fa-solid fa-user"></i> View Account</a>
+                </div>
+            </div>
+            <hr>
+            <div class="mt-4 row justify-content-center">
+                <div class="col-lg-4 mb-3 text-center">
+                    <div class="homestat bg-theme text-white p-4">
+                        <i class="fa-solid fa-users"></i>
+                    </div>
+                    <h4 class="text-theme"><%= data.users.toLocaleString() %></h4>
+                    <h5>Users</h5>
+                </div>
+                <div class="col-lg-4 mb-3 text-center">
+                    <div class="homestat bg-theme text-white p-4">
+                        <i class="fa-solid fa-file-image"></i>
+                    </div>
+                    <h4 class="text-theme"><%= data.uploads.toLocaleString() %></h4>
+                    <h5>Files</h5>
+                </div>
+                <div class="col-lg-4 mb-3 text-center">
+                    <div class="homestat bg-theme text-white p-4">
+                        <i class="fa-solid fa-shield-halved"></i>
+                    </div>
+                    <h4 class="text-theme"><%= data.staff.toLocaleString() %></h4>
+                    <h5>Staff</h5>
+                </div>
+            </div>
+        </div>
+        <br>
+        <%- include('_footer') %>
+    </body>
+</html>

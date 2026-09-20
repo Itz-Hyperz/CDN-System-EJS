@@ -1,0 +1,170 @@
+<%
+    function convertToWord(value) {
+        if(value) {
+            return 'Yes';
+        } else {
+            return 'No';
+        };
+    };
+%>
+
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Admin - <%= sitesettings.sitename %></title>
+        <meta property="og:title" content="Admin - <%= sitesettings.sitename %>" />
+        <link rel="icon" href="/assets/logo.png">
+        <meta property="og:image" content="/assets/logo.png">
+        <meta name="theme-color" content="<%= sitesettings.sitecolor %>">
+        <meta name="description" content="<%= sitesettings.sitedesc %>" />
+        <meta property="og:type" content="website" />
+        <meta property="og:description" content="<%= sitesettings.sitedesc %>" />
+    </head>
+    <body>
+        <%- include('_header') %>
+        <div class="container">
+            <div class="inputstylelol bg-dark p-4 mb-3">
+                <h2 style="font-weight: 700;"><i class="fa-solid fa-gear"></i> Site Settings</h2>
+                <hr>
+                <form action="/backend/update/settings" method="post" enctype="multipart/form-data">
+                    <div class="row justify-content-center">
+                        <div class="col-lg-6 mb-3 text-start">
+                            <label for="sitename">Website Name</label>
+                            <input type="text" name="sitename" placeholder="Website name..." value="<%= sitesettings.sitename %>" required class="form-control inputstylelol bg-input-dark w-100">
+                        </div>
+                        <div class="col-lg-6 mb-3 text-start">
+                            <label for="sitecolor">Website Color HEX</label>
+                            <input type="text" name="sitecolor" placeholder="Website color... (#FFFFFF)" value="<%= sitesettings.sitecolor %>" required class="form-control inputstylelol bg-input-dark w-100">
+                        </div>
+                        <div class="col-lg-6 mb-3 text-start">
+                            <label for="sitedesc">Website Description</label>
+                            <textarea type="text" name="sitedesc" placeholder="Website description..."  rows="4" required class="form-control inputstylelol bg-input-dark w-100"><%= sitesettings.sitedesc %></textarea>
+                        </div>
+                        <div class="col-lg-6 mb-3 text-start">
+                            <label for="public">Public?</label>
+                            <select name="public" required style="border-style: solid !important; border-color: <%= sitesettings.sitecolor %> !important; border-width: 2px !important; border-radius: 0.4em !important;" class="form-control mb-2 bg-input-dark w-100">
+                                <option selected value="<%= sitesettings.public %>"><%= convertToWord(sitesettings.public) %> (Current)</option>
+                                <option value="1">Yes</option>
+                                <option value="0">No</option>
+                            </select>
+                            <label for="public">Logo Image (PNG)</label>
+                            <input type="file" name="logofile" accept="image/png" placeholder="Website color... (#FFFFFF)" class="form-control inputstylelol bg-input-dark w-100">
+                        </div>
+                    </div>
+                    <button type="submit" class="btn mt-3 btn-theme w-100"><i class="fa-solid fa-floppy-disk"></i> Save Changes</button>
+                </form>
+            </div>
+            <div class="inputstylelol bg-dark p-4 mb-3">
+                <h2 style="font-weight: 700;"><i class="fa-solid fa-user"></i> User Manager</h2>
+                <hr>
+                <form action="/registermanual" method="post">
+                    <div class="row justify-content-center">
+                        <div class="col-lg-3 mb-3">
+                            <input type="email" name="email" placeholder="User email..." required class="form-control inputstylelol bg-input-dark w-100">
+                        </div>
+                        <div class="col-lg-3 mb-3">
+                            <input type="password" name="password" placeholder="User password..." required class="form-control inputstylelol bg-input-dark w-100">
+                        </div>
+                        <div class="col-lg-3 mb-3">
+                            <input type="number" name="maxspace" placeholder="Max folder size... (<%= config.defaultMaxSpace %> MB)" required class="form-control inputstylelol bg-input-dark w-100">
+                        </div>
+                        <div class="col-lg-3 mb-3">
+                            <button type="submit" class="btn btn-theme w-100"><i class="fa-solid fa-user-plus"></i> Create User</button>
+                        </div>
+                    </div>
+                </form>
+                <h4 class="mb-3">Currently Stored Users</h4>
+                <div class="customDiv">
+                    <table class="table table-bordered border-white text-white">
+                      <thead>
+                        <tr>
+                          <th scope="col">Account ID</th>
+                          <th scope="col">Email</th>
+                          <th scope="col">Folder</th>
+                          <th scope="col">Max Space</th>
+                          <th scope="col" class="text-end">Options</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <% users.forEach(function(item) { %>
+                          <tr>
+                              <td><%- item.id %></td>
+                              <td><span class="censor"><%- item.email %></span></td>
+                              <td><%- item.folder %></td>
+                              <td><%- item.maxspace %> MB</td>
+                              <td class="text-end"><a href="/backend/deleteuser/<%= item.id %>" class="text-danger">Delete</a></td>
+                          </tr>
+                        <% }); %>
+                      </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="inputstylelol bg-dark p-4 mb-3">
+                <h2 style="font-weight: 700;"><i class="fa-solid fa-server"></i> Upload Manager</h2>
+                <hr>
+                <div class="customDiv">
+                    <table class="table table-bordered border-white text-white">
+                      <thead>
+                        <tr>
+                          <th scope="col">Unique ID</th>
+                          <th scope="col">User ID</th>
+                          <th scope="col">File Name</th>
+                          <th scope="col">Date/Time</th>
+                          <th scope="col" class="text-end">Options</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <% uploads.reverse().forEach(function(item) { %>
+                          <tr>
+                              <td><%- item.uniqueid %></td>
+                              <td><%- item.userid %></td>
+                              <td><%- item.filename %></td>
+                              <td><%- item.datetime %></td>
+                              <td class="text-end"><a href="/backend/deleteupload/<%= item.uniqueid %>" class="text-danger text-end">Delete</a></td>
+                          </tr>
+                        <% }); %>
+                      </tbody>
+                    </table>
+                </div>
+            </div>
+            <% if(config.ownerIds.includes(user.id)) { %>
+                <div class="inputstylelol bg-dark p-4 mb-3">
+                    <h2 style="font-weight: 700;"><i class="fa-solid fa-shield-halved"></i> Staff Manager</h2>
+                    <hr>
+                    <form action="/backend/createstaff" method="post">
+                        <div class="row justify-content-center">
+                            <div class="col-lg-6 mb-3">
+                                <input type="text" name="userid" placeholder="User Account Id..." required class="form-control inputstylelol bg-input-dark w-100">
+                            </div>
+                            <div class="col-lg-6 mb-3">
+                                <button type="submit" class="btn btn-theme w-100"><i class="fa-solid fa-user-plus"></i> Create Staff</button>
+                            </div>
+                        </div>
+                    </form>
+                    <h4 class="mb-3">Current Staff Members</h4>
+                    <div class="customDiv">
+                        <table class="table table-bordered border-white text-white">
+                          <thead>
+                            <tr>
+                              <th scope="col">User ID</th>
+                              <th scope="col" class="text-end">Options</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <% staff.forEach(function(item) { %>
+                              <tr>
+                                  <td><%- item.userid %></td>
+                                  <td class="text-end"><a href="/backend/deletestaff/<%= item.userid %>" class="text-danger text-end">Delete</a></td>
+                              </tr>
+                            <% }); %>
+                          </tbody>
+                        </table>
+                    </div>
+                </div>
+            <% }; %>
+        </div>
+        <p class="mt-3" style="color: lightgray;">Login: <%= currenttime %></p>
+        <%- include('_footer') %>
+    </body>
+</html>
